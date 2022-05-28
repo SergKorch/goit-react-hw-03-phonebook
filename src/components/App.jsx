@@ -21,7 +21,9 @@ export class App extends Component {
     this.setState(prevState => {
       const { contacts } = prevState;
       console.log(contacts);
-      const isContact = contacts.find(contact => contact.name.toLocaleLowerCase() === name.toLocaleLowerCase());
+      const isContact = contacts.find(
+        contact => contact.name.toLocaleLowerCase() === name.toLocaleLowerCase()
+      );
       if (isContact) {
         Notiflix.Notify.failure(`${name} is already in contact`);
         return contacts;
@@ -47,6 +49,18 @@ export class App extends Component {
       contacts: prevState.contacts.filter(item => item.id !== itemId),
     }));
   };
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const contactsParsed = JSON.parse(contacts);
+    if (contactsParsed) {
+      this.setState({ contacts: contactsParsed });
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
   render() {
     const { contacts, filter } = this.state;
     const normalizeFilter = filter.toLocaleLowerCase();
